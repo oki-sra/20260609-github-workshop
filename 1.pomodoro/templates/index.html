@@ -31,6 +31,47 @@
           <button type="button" id="resetButton" class="btn btn-outline">リセット</button>
         </div>
 
+        <section class="settings" aria-label="タイマー設定">
+          <h2>設定</h2>
+          <div class="settings-grid">
+            <label class="field" for="focusMinutesInput">
+              <span>作業(分)</span>
+              <input id="focusMinutesInput" type="number" min="1" step="1" value="25" />
+            </label>
+            <label class="field" for="shortBreakMinutesInput">
+              <span>短休憩(分)</span>
+              <input
+                id="shortBreakMinutesInput"
+                type="number"
+                min="1"
+                step="1"
+                value="5"
+              />
+            </label>
+            <label class="field" for="longBreakMinutesInput">
+              <span>長休憩(分)</span>
+              <input
+                id="longBreakMinutesInput"
+                type="number"
+                min="1"
+                step="1"
+                value="15"
+              />
+            </label>
+            <label class="field" for="longBreakIntervalInput">
+              <span>長休憩間隔</span>
+              <input
+                id="longBreakIntervalInput"
+                type="number"
+                min="1"
+                step="1"
+                value="4"
+              />
+            </label>
+          </div>
+          <p class="settings-note" id="settingsStatus" aria-live="polite">設定を読み込み中...</p>
+        </section>
+
         <section class="stats" aria-label="今日の進捗">
           <h2>今日の進捗</h2>
           <div class="stats-grid">

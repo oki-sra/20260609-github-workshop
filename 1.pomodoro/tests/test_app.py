@@ -21,3 +21,8 @@ def test_index_contains_timer_ui_elements() -> None:
     assert 'id="timeText"' in html
     assert 'id="startPauseButton"' in html
     assert 'id="resetButton"' in html
+    assert 'id="focusMinutesInput"' in html
+    assert 'id="shortBreakMinutesInput"' in html
+    assert 'id="longBreakMinutesInput"' in html
+    assert 'id="longBreakIntervalInput"' in html
+    assert 'id="settingsStatus"' in html
