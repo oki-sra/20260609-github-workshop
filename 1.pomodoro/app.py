@@ -1,3 +1,4 @@
+import os
 from flask import Flask, jsonify, render_template, request
 
 from services.session_service import SessionService, ValidationError
@@ -42,4 +43,5 @@ app = create_app()
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    debug_mode = os.getenv("FLASK_DEBUG", "").strip().lower() in {"1", "true", "yes", "on"}
+    app.run(debug=debug_mode)
