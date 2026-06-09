@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ポモドーロタイマー</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="timer-card" aria-label="ポモドーロタイマー">
+        <header class="timer-header">
+          <h1>ポモドーロタイマー</h1>
+          <div class="window-actions" aria-hidden="true">
+            <span>-</span>
+            <span>□</span>
+            <span>×</span>
+          </div>
+        </header>
+
+        <p class="mode-label" id="modeLabel">待機中</p>
+
+        <div class="ring" id="progressRing" role="img" aria-label="タイマー進捗">
+          <div class="ring-inner">
+            <p class="time-text" id="timeText">25:00</p>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button type="button" id="startPauseButton" class="btn btn-primary">開始</button>
+          <button type="button" id="resetButton" class="btn btn-outline">リセット</button>
+        </div>
+
+        <section class="stats" aria-label="今日の進捗">
+          <h2>今日の進捗</h2>
+          <div class="stats-grid">
+            <div>
+              <p class="stats-value" id="completedCount">0</p>
+              <p class="stats-label">完了</p>
+            </div>
+            <div>
+              <p class="stats-value" id="focusTime">0時間00分</p>
+              <p class="stats-label">集中時間</p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  </body>
+</html>
