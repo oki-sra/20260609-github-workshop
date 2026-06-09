@@ -96,3 +96,73 @@ def test_put_settings_invalid_value_returns_400() -> None:
 
     assert response.status_code == 400
     assert "error" in response.get_json()
+
+
+def test_get_gamification_returns_defaults() -> None:
+    app = create_app()
+    client = app.test_client()
+
+    response = client.get("/api/gamification")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["total_xp"] == 0
+    assert payload["level"] == 1
+    assert payload["total_pomodoros"] == 0
+    assert payload["current_streak"] == 0
+    assert payload["earned_badges"] == []
+    assert isinstance(payload["all_badges"], list)
+    assert len(payload["all_badges"]) > 0
+
+
+def test_post_completed_session_updates_gamification() -> None:
+    app = create_app()
+    client = app.test_client()
+
+    client.post(
+        "/api/sessions",
+        json={
+            "mode": "focus",
+            "planned_seconds": 1500,
+            "actual_seconds": 1500,
+            "status": "completed",
+        },
+    )
+
+    response = client.get("/api/gamification")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert payload["total_xp"] == 100
+    assert payload["total_pomodoros"] == 1
+    assert payload["level"] == 1
+    # first_pomodoro badge should be earned
+    earned_ids = [b["id"] for b in payload["earned_badges"]]
+    assert "first_pomodoro" in earned_ids
+
+
+def test_get_weekly_stats_returns_seven_days() -> None:
+    app = create_app()
+    client = app.test_client()
+
+    response = client.get("/api/stats/weekly")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert isinstance(payload, list)
+    assert len(payload) == 7
+    for item in payload:
+        assert "date" in item
+        assert "completed_pomodoros" in item
+
+
+def test_get_monthly_stats_returns_thirty_days() -> None:
+    app = create_app()
+    client = app.test_client()
+
+    response = client.get("/api/stats/monthly")
+    payload = response.get_json()
+
+    assert response.status_code == 200
+    assert isinstance(payload, list)
+    assert len(payload) == 30
