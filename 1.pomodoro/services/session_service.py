@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
+from services.gamification_service import GamificationService
 from services.settings_service import SettingsService, ValidationError
 from services.stats_service import StatsService
 
@@ -10,6 +11,7 @@ class SessionService:
     def __init__(self) -> None:
         self._settings_service = SettingsService()
         self._stats_service = StatsService()
+        self._gamification_service = GamificationService()
         self._next_id = 1
 
     def record(self, payload: object) -> dict[str, int | str]:
@@ -44,6 +46,7 @@ class SessionService:
 
         if status == "completed" and mode == "focus":
             self._stats_service.add_completed_focus(actual_seconds)
+            self._gamification_service.add_completed_pomodoro()
 
         return session
 
@@ -55,6 +58,15 @@ class SessionService:
 
     def update_settings(self, payload: object) -> dict[str, int]:
         return self._settings_service.update(payload)
+
+    def get_gamification(self) -> dict:
+        return self._gamification_service.get_status()
+
+    def get_weekly_stats(self) -> list[dict]:
+        return self._gamification_service.get_weekly_stats()
+
+    def get_monthly_stats(self) -> list[dict]:
+        return self._gamification_service.get_monthly_stats()
 
 
 __all__ = ["SessionService", "ValidationError"]

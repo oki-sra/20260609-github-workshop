@@ -36,6 +36,18 @@ def create_app() -> Flask:
         settings = session_service.update_settings(payload)
         return jsonify(settings)
 
+    @app.get("/api/gamification")
+    def get_gamification():
+        return jsonify(session_service.get_gamification())
+
+    @app.get("/api/stats/weekly")
+    def get_weekly_stats():
+        return jsonify(session_service.get_weekly_stats())
+
+    @app.get("/api/stats/monthly")
+    def get_monthly_stats():
+        return jsonify(session_service.get_monthly_stats())
+
     return app
 
 

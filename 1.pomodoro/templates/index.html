@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="ja">
+<html lang="ja" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -7,16 +7,50 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   </head>
   <body>
+    <canvas id="particleCanvas" aria-hidden="true"></canvas>
+
     <main class="app-shell">
       <section class="timer-card" aria-label="ポモドーロタイマー">
         <header class="timer-header">
           <h1>ポモドーロタイマー</h1>
-          <div class="window-actions" aria-hidden="true">
-            <span>-</span>
-            <span>□</span>
-            <span>×</span>
+          <div
+            class="theme-switcher"
+            role="group"
+            aria-label="テーマ切替"
+          >
+            <button
+              type="button"
+              class="theme-btn"
+              data-theme="light"
+              title="ライトモード"
+              aria-label="ライトモード"
+            >☀️</button>
+            <button
+              type="button"
+              class="theme-btn"
+              data-theme="dark"
+              title="ダークモード"
+              aria-label="ダークモード"
+            >🌙</button>
+            <button
+              type="button"
+              class="theme-btn"
+              data-theme="focus"
+              title="フォーカスモード"
+              aria-label="フォーカスモード"
+            >🎯</button>
           </div>
         </header>
+
+        <div class="xp-bar-container" aria-label="レベルと経験値">
+          <div class="xp-meta">
+            <span class="xp-level" id="xpLevel">Lv.1</span>
+            <span class="xp-text" id="xpText">0 / 500 XP</span>
+          </div>
+          <div class="xp-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="500" aria-valuenow="0" id="xpBarTrack">
+            <div class="xp-bar-fill" id="xpBarFill"></div>
+          </div>
+        </div>
 
         <p class="mode-label" id="modeLabel">待機中</p>
 
@@ -33,6 +67,35 @@
 
         <section class="settings" aria-label="タイマー設定">
           <h2>設定</h2>
+
+          <div class="preset-group">
+            <span class="preset-label">作業時間</span>
+            <div class="preset-buttons" role="group" aria-label="作業時間プリセット">
+              <button type="button" class="preset-btn" data-preset-type="focus" data-value="15">15分</button>
+              <button type="button" class="preset-btn" data-preset-type="focus" data-value="25">25分</button>
+              <button type="button" class="preset-btn" data-preset-type="focus" data-value="35">35分</button>
+              <button type="button" class="preset-btn" data-preset-type="focus" data-value="45">45分</button>
+            </div>
+          </div>
+
+          <div class="preset-group">
+            <span class="preset-label">短休憩</span>
+            <div class="preset-buttons" role="group" aria-label="短休憩プリセット">
+              <button type="button" class="preset-btn" data-preset-type="short" data-value="5">5分</button>
+              <button type="button" class="preset-btn" data-preset-type="short" data-value="10">10分</button>
+              <button type="button" class="preset-btn" data-preset-type="short" data-value="15">15分</button>
+            </div>
+          </div>
+
+          <div class="preset-group">
+            <span class="preset-label">長休憩</span>
+            <div class="preset-buttons" role="group" aria-label="長休憩プリセット">
+              <button type="button" class="preset-btn" data-preset-type="long" data-value="5">5分</button>
+              <button type="button" class="preset-btn" data-preset-type="long" data-value="10">10分</button>
+              <button type="button" class="preset-btn" data-preset-type="long" data-value="15">15分</button>
+            </div>
+          </div>
+
           <div class="settings-grid">
             <label class="field" for="focusMinutesInput">
               <span>作業(分)</span>
@@ -69,7 +132,36 @@
               />
             </label>
           </div>
+
+          <div class="sound-settings">
+            <span class="sound-settings-label">サウンド</span>
+            <div class="sound-toggles">
+              <label class="toggle-label">
+                <input type="checkbox" id="soundStartInput" checked />
+                <span>開始音</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="soundEndInput" checked />
+                <span>終了音</span>
+              </label>
+              <label class="toggle-label">
+                <input type="checkbox" id="soundTickInput" />
+                <span>tick音</span>
+              </label>
+            </div>
+          </div>
+
           <p class="settings-note" id="settingsStatus" aria-live="polite">設定を読み込み中...</p>
+        </section>
+
+        <section class="gamification" aria-label="実績">
+          <h2>実績</h2>
+          <div class="streak-display">
+            <span class="streak-icon">🔥</span>
+            <span class="streak-count" id="streakCount">0</span>
+            <span class="streak-unit">日連続</span>
+          </div>
+          <div class="badges-grid" id="badgesGrid" aria-label="バッジ一覧"></div>
         </section>
 
         <section class="stats" aria-label="今日の進捗">
@@ -84,6 +176,31 @@
               <p class="stats-label">集中時間</p>
             </div>
           </div>
+        </section>
+
+        <section class="chart-section" aria-label="統計グラフ">
+          <div class="chart-header">
+            <h2>統計</h2>
+            <div class="chart-tabs" role="tablist">
+              <button
+                type="button"
+                class="chart-tab active"
+                role="tab"
+                data-period="weekly"
+                id="weeklyTab"
+                aria-selected="true"
+              >週間</button>
+              <button
+                type="button"
+                class="chart-tab"
+                role="tab"
+                data-period="monthly"
+                id="monthlyTab"
+                aria-selected="false"
+              >月間</button>
+            </div>
+          </div>
+          <canvas id="statsChart" aria-label="統計グラフ"></canvas>
         </section>
       </section>
     </main>
